@@ -3,7 +3,7 @@
 # ============================================================
 import streamlit as st
 import pandas as pd
-from app.model import predict, load_model, LABEL_NAMES
+from model import predict, load_model, LABEL_NAMES
 
 SENTIMENT_EMOJI = {"Negative": "😠", "Neutral": "😐", "Positive": "😊"}
 SENTIMENT_COLOR = {"Negative": "#e74c3c", "Neutral": "#f39c12", "Positive": "#2ecc71"}
