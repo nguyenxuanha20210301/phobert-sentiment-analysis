@@ -208,3 +208,4 @@ __marimo__/
 models/phobert-sentiment/model.safetensors
 models/phobert-sentiment/*.bin
 models/phobert-sentiment/model.onnx
+models/phobert-sentiment/model.onnx.data
