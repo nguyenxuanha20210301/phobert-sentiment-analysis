@@ -5,7 +5,8 @@ End-to-end sentiment analysis pipeline for Vietnamese text, from data exploratio
 ## Highlights
 
 - **93.97% accuracy** and **0.83 macro F1** on the UIT-VSFC test set
-- Full ML pipeline: EDA → preprocessing → training → evaluation → error analysis → deployment
+- Full ML pipeline: EDA → preprocessing → training → hyperparameter tuning → evaluation → error analysis → deployment
+- Hyperparameter search with Optuna, experiment tracking with MLflow
 - REST API with FastAPI (Swagger docs included)
 - Interactive web UI with Streamlit
 - Docker support for one-command deployment
@@ -16,7 +17,7 @@ End-to-end sentiment analysis pipeline for Vietnamese text, from data exploratio
 phobert-sentiment-analysis/
 ├── notebooks/
 │   ├── 01_data_pipeline.ipynb        # EDA, preprocessing, tokenization
-│   ├── 02_training_and_evaluate.ipynb # Baseline + PhoBERT training
+│   ├── 02_training_and_evaluate.ipynb # Baseline + PhoBERT + Optuna tuning
 │   └── 03_error_analysis.ipynb       # Error analysis + model comparison
 ├── app/
 │   ├── __init__.py
@@ -25,6 +26,8 @@ phobert-sentiment-analysis/
 │   └── streamlit_app.py              # Streamlit web UI
 ├── models/
 │   └── phobert-sentiment/            # Fine-tuned checkpoint (not in repo)
+├── scripts/
+│   └── clean_notebook.sh             # Strip widget metadata before commit
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
@@ -36,7 +39,10 @@ phobert-sentiment-analysis/
 | Model | Test Accuracy | Test F1 (Macro) |
 |-------|:------------:|:---------------:|
 | TF-IDF + Logistic Regression | 0.8850 | 0.7210 |
-| **PhoBERT (fine-tuned)** | **0.9397** | **0.8272** |
+| PhoBERT (fine-tuned) | 0.9397 | 0.8272 |
+| **PhoBERT (Optuna-tuned)** | **TBD** | **TBD** |
+
+> Update the Optuna-tuned row with your actual results after running the notebook.
 
 ### Per-Class Performance (PhoBERT)
 
@@ -210,6 +216,9 @@ The dataset contains student feedback about university courses, labeled with thr
 - TF-IDF + Logistic Regression baseline
 - PhoBERT fine-tuning with AdamW optimizer, linear warmup, gradient clipping
 - Early stopping on validation F1 (patience=2)
+- Hyperparameter tuning with Optuna (learning rate, warmup ratio, weight decay)
+- Retrain with best Optuna params as the final production model
+- All runs tracked with MLflow for experiment comparison
 - Training curves, confusion matrix, per-class metrics
 
 ### Phase 3 — Error Analysis (`03_error_analysis.ipynb`)
@@ -236,6 +245,8 @@ The dataset contains student feedback about university courses, labeled with thr
 | Deep Learning | PyTorch |
 | Transformers | Hugging Face Transformers |
 | Baseline | scikit-learn (TF-IDF + LogReg) |
+| Hyperparameter Tuning | Optuna |
+| Experiment Tracking | MLflow |
 | API | FastAPI + Uvicorn |
 | Web UI | Streamlit |
 | Containerization | Docker + Docker Compose |
@@ -248,10 +259,10 @@ The dataset contains student feedback about university courses, labeled with thr
 | Base model | `vinai/phobert-base` |
 | Max sequence length | 128 tokens |
 | Batch size | 32 |
-| Learning rate | 2e-5 |
-| Weight decay | 0.01 |
+| Learning rate | 2e-5 (tuned with Optuna) |
+| Weight decay | 0.01 (tuned with Optuna) |
 | Epochs | 4 (with early stopping) |
-| Warmup ratio | 10% |
+| Warmup ratio | 10% (tuned with Optuna) |
 | Optimizer | AdamW |
 | Scheduler | Linear warmup |
 | Gradient clipping | max_norm=1.0 |
